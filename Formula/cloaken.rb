@@ -2,9 +2,9 @@ class Cloaken < Formula
   include Language::Python::Shebang
 
   desc "Hide macOS apps from Dock/Cmd+Tab by toggling LSUIElement"
-  homepage "https://github.com/YOUR_GITHUB_USERNAME/cloaken"
-  url "https://github.com/YOUR_GITHUB_USERNAME/cloaken/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "REPLACE_WITH_TARBALL_SHA256"
+  homepage "https://github.com/woxidi/cloaken"
+  url "https://github.com/woxidi/cloaken/archive/refs/tags/v0.1.0.tar.gz"
+  sha256 "b3331345b4d0d0094557ead2a37cf8912d4c210f0a38869508ad39191d659c8c"
   license "MIT"
   version "0.1.0"
 
