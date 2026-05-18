@@ -73,13 +73,25 @@ def normalize_app_path(app_path):
 
 
 def write_plist(plist_path, data):
-    with open(plist_path, "wb") as file_handle:
-        plistlib.dump(data, file_handle)
+    try:
+        with open(plist_path, "wb") as file_handle:
+            plistlib.dump(data, file_handle)
+    except PermissionError:
+        raise CloakenError(f"Permission denied writing to {plist_path}. Try running with sudo.")
+    except IOError as e:
+        raise CloakenError(f"Failed to write plist: {e}")
 
 
 def read_plist(plist_path):
-    with open(plist_path, "rb") as file_handle:
-        return plistlib.load(file_handle)
+    try:
+        with open(plist_path, "rb") as file_handle:
+            return plistlib.load(file_handle)
+    except PermissionError:
+        raise CloakenError(f"Permission denied reading {plist_path}.")
+    except plistlib.InvalidFileException:
+        raise CloakenError(f"Invalid plist file: {plist_path}")
+    except IOError as e:
+        raise CloakenError(f"Failed to read plist: {e}")
 
 
 def get_signing_status(app_path):
@@ -91,7 +103,7 @@ def get_signing_status(app_path):
         text=True
     )
     is_signed = result.returncode == 0
-    details = result.stderr.strip() if result.stderr else result.stdout.strip()
+    details = (result.stdout or result.stderr).strip()
     return is_signed, details
 
 
@@ -131,8 +143,7 @@ def show_status(app_path=None):
             print(f"Found {len(cloakened_apps)} cloakened app(s):\n")
             for app_name, app_path in cloakened_apps:
                 try:
-                    _, sign_details = get_signing_status(app_path)
-                    is_signed = not sign_details or "valid" in sign_details.lower()
+                    is_signed, _ = get_signing_status(app_path)
                     signed_str = "✓" if is_signed else "✗"
                     print(f"  {signed_str} {app_name:<40} {app_path}")
                 except Exception:
@@ -145,8 +156,11 @@ def toggle_cloaking(app_path, undo=False, skip_resign=False):
 
     backup_path = plist_path + ".bak"
     if not os.path.exists(backup_path):
-        shutil.copy2(plist_path, backup_path)
-        print(f"Backup created: {backup_path}")
+        try:
+            shutil.copy2(plist_path, backup_path)
+            print(f"Backup created: {backup_path}")
+        except (IOError, OSError) as e:
+            raise CloakenError(f"Failed to create backup: {e}")
 
     plist_data = read_plist(plist_path)
 
@@ -183,7 +197,7 @@ def build_parser():
         prog="cloaken",
         description=(
             "Hide or restore macOS applications in Dock/Cmd+Tab by toggling "
-            "the LSUIElement key in the app's Info.plist."
+            "the LSUIElement key in the app's Info.plist. "
             "Useful when you want apps to run in background without cramming the Dock."
         ),
         formatter_class=argparse.RawTextHelpFormatter,
