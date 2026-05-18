@@ -5,7 +5,7 @@ Cloaken is a lightweight macOS CLI utility that toggles an app bundle between:
 - **Visible app mode** (normal Dock + Cmd+Tab behavior)
 - **Agent mode** (`LSUIElement=true`, hidden from Dock/Cmd+Tab)
 
-It works by editing the target app's `Contents/Info.plist` and (by default) refreshing quarantine/signature metadata to reduce launch issues.
+It works by editing the target app's `Contents/Info.plist` and (by default) refreshing quarantine/signature metadata to reduce launch issues. It's useful when you want to run specific apps in the background without cramming your Dock. For example your favorite music player, video player and pdf reader. 
 
 ## Features
 
@@ -44,30 +44,6 @@ Get full command help:
 
 ```bash
 cloaken --help
-```
-
-## Homebrew Tap Setup
-
-If you own a tap repo (for example `YOUR_GITHUB_USERNAME/homebrew-tap`):
-
-```bash
-brew tap YOUR_GITHUB_USERNAME/tap
-brew install cloaken
-```
-
-This repository already includes a formula template at `Formula/cloaken.rb`.
-Before publishing, update formula metadata:
-
-1. `url` to your release tarball (for example a GitHub release tag)
-2. `sha256` to match that tarball
-3. `homepage` and owner/repo values
-
-Then run:
-
-```bash
-brew audit --strict --online YOUR_GITHUB_USERNAME/tap/cloaken
-brew install --build-from-source YOUR_GITHUB_USERNAME/tap/cloaken
-brew test cloaken
 ```
 
 ## Safety Notes
