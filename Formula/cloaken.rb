@@ -1,6 +1,4 @@
 class Cloaken < Formula
-  include Language::Python::Shebang
-
   desc "Hide macOS apps from Dock/Cmd+Tab by toggling LSUIElement"
   homepage "https://github.com/woxidi/cloaken"
   url "https://github.com/woxidi/cloaken/archive/refs/tags/v0.1.0.tar.gz"
@@ -12,7 +10,6 @@ class Cloaken < Formula
 
   def install
     bin.install "cloaken.py" => "cloaken"
-    rewrite_shebang detected_python_shebang(use_python_from_path("python3")), bin/"cloaken"
   end
 
   test do
